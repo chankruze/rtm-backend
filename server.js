@@ -32,19 +32,18 @@ io.on("connection", (socket) => {
   });
 
   // forward the private message to the right recipient
-  socket.on("message-private", ({ content, to }) => {
-    socket.to(to).emit(
-      "message-private",
-      {
+  socket.on(
+    "message-private",
+    ({ content, senderUid, receiverUid, receiverSocketId }) => {
+      console.log({ content, senderUid, receiverUid, receiverSocketId });
+      socket.to(receiverSocketId).emit("message-private", {
         content,
-        from: userData.uid,
-        to,
-      },
-      (delivered) => {
-        console.log(`Message delivered: ${delivered}`);
-      }
-    );
-  });
+        senderUid,
+        receiverUid,
+        receiverSocketId,
+      });
+    }
+  );
 
   // socket.on("message-sent", ({ content, to }) => {
   //   // room (group chat)
